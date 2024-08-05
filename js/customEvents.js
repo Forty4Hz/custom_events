@@ -118,6 +118,18 @@
 				};
 			}
 
+			if (typeof userOptionsPointEvents.click === "undefined" && typeof userOptionsEvents.click !== "undefined"){
+				userOptionsPointEvents.click = userOptionsEvents.click;
+			}
+
+			if (typeof userOptionsPointEvents.contextmenu === "undefined" && typeof userOptionsEvents.contextmenu !== "undefined"){
+				userOptionsPointEvents.contextmenu = userOptionsEvents.contextmenu;
+			}
+
+			if (typeof userOptionsPointEvents.mouseOver === "undefined" && typeof userOptionsEvents.mouseOver !== "undefined"){
+				userOptionsPointEvents.mouseOver = userOptionsEvents.mouseOver;
+			}
+
 			// Add support for legendItemClick in pie chart
 			if (userOptionsPointEvents) {
 				options.point.events = {
@@ -125,6 +137,7 @@
 					select: userOptionsPointEvents && userOptionsPointEvents.select,
 					unselect: userOptionsPointEvents && userOptionsPointEvents.unselect,
 					click: userOptionsPointEvents && userOptionsPointEvents.click,
+					contextmenu: userOptionsPointEvents && userOptionsPointEvents.contextmenu,
 					mouseOut: userOptionsPointEvents && userOptionsPointEvents.mouseOut,
 					mouseOver: userOptionsPointEvents && userOptionsPointEvents.mouseOver
 				};
@@ -374,7 +387,6 @@
 								if (
 									isPoint &&
 									event === 'click' &&
-									elemObj &&
 									elemObj.series &&
 									elemObj.series.options &&
 									elemObj.series.options.allowPointSelect
@@ -391,15 +403,7 @@
 								}
 
 								if (elemObj && elemObj.drilldown) { // #114 - drillUp - undefined ddDupes []
-									const series = elemObj.series;
-									if (isPoint && series.xAxis &&
-										series.chart.options.drilldown.allowPointDrilldown ===
-										false) {
-										series.xAxis.drilldownCategory(elemObj.x, e);
-									}
-									else {
-										elemObj.doDrilldown(undefined, undefined, e);
-									}
+									elemObj.doDrilldown(undefined, undefined, e);
 								} else if (events && events[event]) {
 									events[event].call(elemObj, e);
 								}
@@ -593,7 +597,7 @@
 			renderItem: function (item) {
 				return {
 					events: this.options.itemEvents,
-					element: item.legendGroup || item.legendItem.group,
+					element: item.legendGroup,
 					eventObject: item
 				};
 			},
